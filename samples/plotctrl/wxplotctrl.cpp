@@ -51,6 +51,8 @@ enum Menu_IDs
     ID_SHOW_TITLE,
     ID_SHOW_KEY,
 
+	ID_APPAND_DATA,
+
     ID_ABOUT
 };
 
@@ -146,6 +148,7 @@ BEGIN_EVENT_TABLE(wxPlotCtrlFrame, wxFrame)
 
     EVT_PLOTCTRL_MOUSE_FUNC_CHANGING (wxID_ANY, wxPlotCtrlFrame::OnPlotCtrl)
     EVT_PLOTCTRL_MOUSE_FUNC_CHANGED  (wxID_ANY, wxPlotCtrlFrame::OnPlotCtrl)
+	
 
 END_EVENT_TABLE()
 
@@ -184,6 +187,8 @@ wxPlotCtrlFrame::wxPlotCtrlFrame() : wxFrame()
     plotMenu->Append(ID_SHOW_YLABEL, _T("Show y-axis label"), _T("Show the y-axis label"), true);
     plotMenu->Append(ID_SHOW_TITLE,  _T("Show title"), _T("Show the title of the plot"), true);
     plotMenu->Append(ID_SHOW_KEY,    _T("Show key"), _T("Show a key for the plot"), true);
+	ID_APPAND_DATA;
+	plotMenu->Append(ID_APPAND_DATA, _T("AppandData"), _T("AppandData"), true);
 
 
     wxMenu *helpMenu = new wxMenu;
@@ -248,6 +253,7 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
                 plotData.LoadFile(fileDialog.GetPath());
                 if (plotData.Ok())
                 {
+					//plotData.Resize(12, 0.1, 0.0001);
                     m_plotCtrl->AddCurve(plotData, true, true);
                 }
             }
@@ -298,7 +304,43 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
         case ID_SHOW_YLABEL : m_plotCtrl->SetShowYAxisLabel(event.IsChecked()); break;
         case ID_SHOW_TITLE  : m_plotCtrl->SetShowPlotTitle(event.IsChecked()); break;
         case ID_SHOW_KEY    : m_plotCtrl->SetShowKey(event.IsChecked()); break;
+		case ID_APPAND_DATA: {
+			wxPlotCurve*  curve = m_plotCtrl->GetCurve(0);
 
+			//if (wxDynamicCast(&curve, wxPlotData)) 
+			//{
+			wxPlotData *p = (wxPlotData*)curve;
+			int count = p->GetCount();
+
+			double x = p->GetXValue(1);
+			p->SetValue(1, x, 0.851);
+
+			p->Resize(count + 1, 0.01, 0.87);
+			//p->SetValue(count, -0.1, 0.85);
+
+			char tempstr[16];
+			double y;
+
+			for (int i = 0; i < p->GetCount(); i++) {
+				x = p->GetXValue(i);
+				y = p->GetYValue(i);
+				p->SetValue(i, x, y);
+				sprintf(tempstr, "%.2f-%.2f\t", x, y);
+				OutputDebugStringA(tempstr);
+			}
+			OutputDebugStringA("\n");
+
+			m_plotCtrl->CalcBoundingPlotRect();
+			m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_EVERYTHING);
+			m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_BLOCKER);
+			
+			//m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_PLOT);
+
+			//}
+			char* data = (char*)curve->GetClientData();
+			data = (char*)curve->GetRefData();
+			data = 0;
+			}break;
         case ID_ABOUT :
         {
             wxMessageBox(wxString::Format(
