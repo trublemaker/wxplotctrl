@@ -647,8 +647,11 @@ public:
     void SetYAxisLabel(const wxString &label);
     bool GetShowXAxisLabel() const { return m_show_xlabel; }
     bool GetShowYAxisLabel() const { return m_show_ylabel; }
-    void SetShowXAxisLabel( bool show ) { m_show_xlabel = show; DoSize(); }
-    void SetShowYAxisLabel( bool show ) { m_show_ylabel = show; DoSize(); }
+	void SetShowXAxisLabel(bool show) { m_show_xlabel = show; DoSize(); }
+	void SetShowYAxisLabel(bool show) { m_show_ylabel = show; DoSize(); }
+
+	void SetShowXScrollBar(bool show) { m_xAxisScrollbar->Show(show); }
+	void SetShowYScrollBar(bool show) { m_yAxisScrollbar->Show(show); }
 
     // Get/Set and show/hide the title
     const wxString& GetPlotTitle() const { return m_title; }

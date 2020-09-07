@@ -3124,6 +3124,8 @@ void wxPlotCtrl::ProcessAreaEVT_MOUSE_EVENTS( wxMouseEvent &event )
     wxPoint lastMousePt = m_mousePt;
     m_mousePt = event.GetPosition();
 
+	return;
+
     if (event.ButtonDown() && IsTextCtrlShown())
     {
         HideTextCtrl(true, true);
