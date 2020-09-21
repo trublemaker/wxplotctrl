@@ -213,6 +213,8 @@ wxPlotCtrlFrame::wxPlotCtrlFrame() : wxFrame()
 
     m_plotCtrl = new wxPlotCtrl(splitter, wxID_ANY);
 
+	m_plotCtrl->SetDrawSymbols(false);
+
     m_textCtrl->AppendText(wxT("For mouse and key functions, please see\nwxPlotCtrl::ProcessAreaEVT_MOUSE_EVENTS and wxPlotCtrl::ProcessAreaEVT_CHAR\n"));
     m_textCtrl->SetInsertionPointEnd();
 

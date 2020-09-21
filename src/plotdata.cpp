@@ -1188,7 +1188,7 @@ void wxPlotData::SetYValues( int start_index, int count, double y )
     int end_index = start_index + count - 1;
     wxPCHECK_MINMAX_RET(start_index, 0, M_PLOTDATA->m_count-1, wxT("Invalid starting index"));
     wxPCHECK_MINMAX_RET(end_index,   0, M_PLOTDATA->m_count-1, wxT("Invalid ending index"));
-    double *y_data = M_PLOTDATA->m_Ydata;
+    double *y_data = M_PLOTDATA->m_Ydata+ start_index;
     for (int n = start_index; n <= end_index; n++)
         *y_data++ = y;
 }
@@ -1204,7 +1204,7 @@ void wxPlotData::SetXStepValues( int start_index, int count, double x_start, dou
 
     double *x_data = M_PLOTDATA->m_Xdata + start_index;
     for (int i = 0; i < count; i++, x_data++)
-        *x_data = x_start + (i * dx);
+        *x_data = x_start + ((i+1) * dx);
 }
 void wxPlotData::SetYStepValues( int start_index, int count, double y_start, double dy )
 {
