@@ -540,7 +540,9 @@ void wxPlotDrawerXAxis::Draw(wxDC *dc, bool refresh)
     int i, count = m_tickPositions.GetCount();
     for (i=0; i<count; i++)
     {
-        dc->DrawText(m_tickLabels[i], m_tickPositions[i], y_pos);
+		if (i<m_tickPositions.GetCount()) {
+			dc->DrawText(m_tickLabels[i], m_tickPositions[i], y_pos);
+		}
 
 //        if (!IsFinite(current, wxT("axis label is not finite")))
 //            break;
@@ -588,7 +590,10 @@ void wxPlotDrawerYAxis::Draw(wxDC *dc, bool refresh)
     int i, count = m_tickLabels.GetCount();
     for (i=0; i<count; i++)
     {
-        dc->DrawText( m_tickLabels[i], 2, m_tickPositions[i] );
+		
+		if (i<m_tickPositions.GetCount()) {
+			dc->DrawText(m_tickLabels[i], 2, m_tickPositions[i]);
+		}
 
 //        if (!IsFinite(current, wxT("axis label is not finite")))
 //            break;
@@ -684,7 +689,8 @@ void wxPlotDrawerKey::Draw(wxDC *dc, const wxString& keyString_)
         keyString = keyString.AfterFirst(wxT('\n'));
         if (subkey.IsEmpty()) break;
 
-        if (m_owner && m_owner->GetCurve(i))
+		//dont display -- before key.
+        if (0 && m_owner && m_owner->GetCurve(i))
         {
             wxPen keyPen = m_owner->GetCurve(i)->GetPen(wxPLOTPEN_NORMAL).GetPen();
             if (m_pen_scale != 1)

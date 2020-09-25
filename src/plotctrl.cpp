@@ -3124,6 +3124,7 @@ void wxPlotCtrl::ProcessAreaEVT_MOUSE_EVENTS( wxMouseEvent &event )
     wxPoint lastMousePt = m_mousePt;
     m_mousePt = event.GetPosition();
 
+	//mao 2020.09.09
 	return;
 
     if (event.ButtonDown() && IsTextCtrlShown())

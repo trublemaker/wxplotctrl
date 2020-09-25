@@ -111,6 +111,7 @@ wxPlotDataRefData::~wxPlotDataRefData()
 
 void wxPlotDataRefData::Destroy()
 {
+	//mao -- 2020.09.09
     if (!m_static)
     {
         if ( m_Xdata  ) free( m_Xdata );

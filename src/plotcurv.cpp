@@ -178,7 +178,7 @@ void wxPlotCurve::SetBoundingRect( const wxRect2DDouble &rect )
 wxGenericPen wxPlotCurve::GetPen(wxPlotPen_Type colour_type) const
 {
     wxCHECK_MSG(Ok(), wxGenericPen(), wxT("invalid plotcurve"));
-    wxCHECK_MSG((colour_type >= 0) && (colour_type < (int)M_PLOTCURVEDATA->m_pens.GetCount()), wxGenericPen(), wxT("invalid plot colour"));
+    wxCHECK_MSG((colour_type >= 0) && (colour_type < (int)((wxPlotCurveRefData*)m_refData)->m_pens.GetCount()), wxGenericPen(), wxT("invalid plot colour"));
 
     return M_PLOTCURVEDATA->m_pens[colour_type];
 }
