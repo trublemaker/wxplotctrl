@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plotctrl_sample", "wxplotctrl_plotctrl_sample.vcxproj", "{FB0594E1-413E-4DA4-A255-E793A06298B4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A545A6FD-D450-4A3F-9DCC-A33A6410A595} = {A545A6FD-D450-4A3F-9DCC-A33A6410A595}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxplotctrl", "wxplotctrl_wxplotctrl.vcxproj", "{A545A6FD-D450-4A3F-9DCC-A33A6410A595}"
 EndProject

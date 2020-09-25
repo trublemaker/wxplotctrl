@@ -258,7 +258,7 @@
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
     <IncludePath>C:\dev\BorderMeasur\ThirdPart\wxWidgets\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib\vc_dll;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Unicode Release Multilib|Win32'">
     <OutDir>.\..\samples\plotctrl\</OutDir>
@@ -1135,6 +1135,35 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='DLL Unicode Debug Monolithic|Win32'">\dev\BorderMeasur\ThirdPart\wxplotctrl\samples\plotctrl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Unicode Debug Monolithic|Win32'">\dev\BorderMeasur\ThirdPart\wxplotctrl\samples\plotctrl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\plotctrl\wx\msw\blank.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\bullseye.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\cross.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\hand.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\magnif1.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\pbrush.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\pencil.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\pntleft.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\pntright.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\rightarr.cur" />
+    <None Include="..\samples\plotctrl\wx\msw\roller.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\samples\plotctrl\wx\msw\cdrom.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\colours.bmp" />
+    <Image Include="..\samples\plotctrl\wx\msw\computer.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\csquery.bmp" />
+    <Image Include="..\samples\plotctrl\wx\msw\drive.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\file1.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\floppy.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\folder1.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\folder2.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\removble.ico" />
+    <Image Include="..\samples\plotctrl\wx\msw\std.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\samples\plotctrl\resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

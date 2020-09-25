@@ -746,10 +746,10 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_lib\msw;$(WXWIN)\include;..\include;$(WXCODE)\components\wxthings\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AssemblerListingLocation>.\msvc6prj\wxplotctrl\</AssemblerListingLocation>
+      <AssemblerListingLocation>.\Release Multilib\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\msvc6prj\wxplotctrl\wxplotctrl_wxplotctrl.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>.\msvc6prj\wxplotctrl\</ObjectFileName>
-      <ProgramDataBaseFileName>..\lib\wxplotctrl.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>.\Release Multilib\</ObjectFileName>
+      <ProgramDataBaseFileName>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib\wxplotctrl.pdb</ProgramDataBaseFileName>
       <AdditionalOptions> /EHsc </AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
@@ -761,7 +761,7 @@
     </Bscmake>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>..\lib\wxplotctrl.lib</OutputFile>
+      <OutputFile>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib\wxplotctrl.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Unicode Debug Multilib|Win32'">
@@ -822,10 +822,10 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_lib\mswd;$(WXWIN)\include;..\include;$(WXCODE)\components\wxthings\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AssemblerListingLocation>.\msvc6prj\wxplotctrl\</AssemblerListingLocation>
+      <AssemblerListingLocation>.\Debug Multilib\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\msvc6prj\wxplotctrl\wxplotctrl_wxplotctrl.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>.\msvc6prj\wxplotctrl\</ObjectFileName>
-      <ProgramDataBaseFileName>..\lib\wxplotctrld.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>.\Debug Multilib\</ObjectFileName>
+      <ProgramDataBaseFileName>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib\wxplotctrld.pdb</ProgramDataBaseFileName>
       <AdditionalOptions> /EHsc </AdditionalOptions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
@@ -838,7 +838,7 @@
     </Bscmake>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>..\lib\wxplotctrld.lib</OutputFile>
+      <OutputFile>C:\dev\BorderMeasur\ThirdPart\wxWidgets\lib\wxplotctrld.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug Multilib|Win32'">
