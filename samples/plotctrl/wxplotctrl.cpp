@@ -50,9 +50,13 @@ enum Menu_IDs
     ID_SHOW_YLABEL,
     ID_SHOW_TITLE,
     ID_SHOW_KEY,
+	ID_SHOW_APPEND,
 
     ID_ABOUT
 };
+
+double x[50] = { 5 }, y[50] = { 5 };
+
 
 // ----------------------------------------------------------------------------
 // wxPlotCtrlApp - the application class
@@ -183,9 +187,11 @@ wxPlotCtrlFrame::wxPlotCtrlFrame() : wxFrame()
     plotMenu->Append(ID_SHOW_XLABEL, _T("Show x-axis label"), _T("Show the x-axis label"), true);
     plotMenu->Append(ID_SHOW_YLABEL, _T("Show y-axis label"), _T("Show the y-axis label"), true);
     plotMenu->Append(ID_SHOW_TITLE,  _T("Show title"), _T("Show the title of the plot"), true);
-    plotMenu->Append(ID_SHOW_KEY,    _T("Show key"), _T("Show a key for the plot"), true);
+	plotMenu->Append(ID_SHOW_KEY, _T("Show key"), _T("Show a key for the plot"), true);
+	plotMenu->Append(ID_SHOW_KEY, _T("Show key"), _T("Show a key for the plot"), true);
+	plotMenu->Append(ID_SHOW_APPEND, _T("APPEND"), _T("ID_SHOW_APPEND"), true);
 
-
+	
     wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(ID_ABOUT, _T("&About...\tF1"), _T("Show about dialog"));
 
@@ -251,24 +257,50 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
                                     wxT(""),
                                     wxT("All files (*)|*"),
                                     wxOPEN | wxFILE_MUST_EXIST);
+			for (int i = 0; i < 50; i++) {
+				x[i] = 0.1*i;
+				y[i] = 0.1*sin(0.1*i)-0.5;
+			}
+
+			wxPlotData plotData;
 
             if (fileDialog.ShowModal() == wxID_OK)
             {
-                wxPlotData plotData;
-                plotData.LoadFile(fileDialog.GetPath());
-				wxPlotData plotData1;
-				plotData1.LoadFile("C:\\dev\\BorderMeasur\\ThirdPart\\wxplotctrl\\samples\\plotctrl\\1.dat");
-				wxPlotData curve2;
-				//plotData.Add()
-                if (plotData.Ok())
-                {					
-					plotData.Add(plotData1);
-					plotData.Insert(plotData1, 0);
+				wxString filename = fileDialog.GetPath();
+                plotData.LoadFile(filename);
 
-					m_plotCtrl->AddCurve(plotData, true, true);
-					m_plotCtrl->AddCurve(plotData1, true, true);
+				wxPlotData plotData1;
+				plotData1.Create(x, y, 50,1);
+
+				bool xy = 0;// plotData1.Ok();
+				xy = plotData1.Ok();
+
+				//plotData1.LoadFile("C:\\dev\\BorderMeasur\\ThirdPart\\wxplotctrl\\samples\\plotctrl\\1.dat");
+				//plotData1.Add()				
+
+				//wxPlotData xxx(&x, &y, 1);
+
+				//xy = xxx.Ok();
+				//xy = plotData.Ok();
+
+				//????
+				wxPlotData p3 = plotData.Append(plotData1);
+				wxPlotData p4 = p3.Append(plotData1);
+                if (plotData1.Ok())
+                {					
+					//plotData.Add(plotData1);
+					//plotData.Insert(plotData1, 0);
+
+					m_plotCtrl->AddCurve(p3, true, true);
+					//m_plotCtrl->AddCurve(p4, true, true);
+					//m_plotCtrl->AddCurve(plotData1, true, false);
+
+					//m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_EVERYTHING);
 
 					wxPlotCurve* curve = m_plotCtrl->GetCurve(0);	
+
+					//m_plotCtrl->GetYAxisLabel();
+					m_plotCtrl->SetYAxisLabel("TTT");
 				
 					wxPlotPen_Type colour_type = wxPLOTPEN_NORMAL;
 					wxGenericPen pen(wxColour(255, 128, 0), 4);
@@ -277,11 +309,11 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
 					//plotFunc.SetPen(colour_type, pen);
 
 					//m_plotCtrl->AddCurve(plotFunc, true, true);
-					curve->SetPen(colour_type, pen);
+					//curve->SetPen(colour_type, pen);
 
-					curve = m_plotCtrl->GetCurve(0);
-					wxGenericPen pen2(wxColour(128, 0, 255), 2);
-					curve->SetPen(colour_type, pen2);
+					//curve = m_plotCtrl->GetCurve(0);
+					//wxGenericPen pen2(wxColour(128, 0, 255), 2);
+					//curve->SetPen(colour_type, pen2);
 				}
             }
             break;
@@ -323,6 +355,54 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
 
             break;
         }
+
+		case ID_SHOW_APPEND:
+		{
+			//m_plotCtrl->AddCurve(plotFunc, true, true);
+			static double ax = 5, ay = 0.31;
+			wxPlotData plotData1;
+
+			plotData1.Create(&ax, &ay, 1, 1);
+			m_plotCtrl->AddCurve(plotData1);
+			
+			wxPlotCurve* curve = m_plotCtrl->GetCurve(0);
+
+			wxPlotData *data = wxDynamicCast(curve, wxPlotData);
+
+			int count = data->GetCount();
+			wxPlotData newdata = data->Append(plotData1);
+			//m_plotCtrl->DeleteCurve(0);
+			count = data->GetCount();
+			
+			//data->SetRefData();
+			wxObjectRefData* ref = newdata.GetRefData();
+
+			wxPlotCurveRefData * pref= (wxPlotCurveRefData*)curve->GetRefData();			
+		
+			//pref->Copy()
+			curve->SetRefData( ref );
+			count = data->GetCount();
+			m_plotCtrl->AddCurve(newdata);
+			//m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_EVERYTHING);
+			OutputDebugStringA("XXXXX\t");
+
+			wxRect2DDouble rect;
+			int y = 2;
+			rect.m_x = 0; rect.m_y = -y / 2; rect.m_width = 10; rect.m_height = y;
+
+			wxRect2DDouble r1 = m_plotCtrl->GetCurveBoundingRect();
+			wxRect2DDouble r2 = m_plotCtrl->GetDefaultBoundingRect();
+			
+			//m_plotCtrl->SetDefaultBoundingRect(rect);
+
+			r1 = m_plotCtrl->GetCurveBoundingRect();
+			r2 = m_plotCtrl->GetDefaultBoundingRect();
+
+			ax++; ay++;
+		}
+
+
+			break;
 
         case ID_QUIT : Close(true); return;
 
