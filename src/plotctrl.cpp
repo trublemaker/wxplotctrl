@@ -487,7 +487,8 @@ void wxPlotCtrl::Init()
     m_curveBoundingRect = m_defaultPlotRect;
     m_areaClientRect    = wxRect(0, 0, 10, 10);
 
-    m_xAxisTickFormat = m_yAxisTickFormat = wxT("%lf");
+    m_xAxisTickFormat = wxT("%5d"); //wxT("%lf");
+	m_yAxisTickFormat = wxT("%5d");  
     m_xAxisTick_step  = m_yAxisTick_step  = 1.0;
     m_xAxisTick_count = m_yAxisTick_count = 4;
     m_correct_ticks   = true;
@@ -517,9 +518,9 @@ void wxPlotCtrl::Init()
 
     m_axisFontSize.x    = 6;
     m_axisFontSize.y    = 12;
-    m_y_axis_text_width = 60;
+    m_y_axis_text_width = 30; //mao 60->30
     m_area_border_width = 1;
-    m_border            = 4;
+    m_border            = 1;
     m_min_exponential   = 1000;
     m_pen_print_width   = 0.4;
 
@@ -2304,9 +2305,16 @@ void wxPlotCtrl::DoSize(const wxRect &boundingRect, bool set_window_sizes)
     // wait until we have a normal size
     if ((size.x < 2) || (size.y < 2)) return;
 
-    int sb_width = m_yAxisScrollbar->GetSize().GetWidth();
+	bool x = m_yAxisScrollbar->IsShown();
+	int sb_width = 0;// m_yAxisScrollbar->IsShown() ? m_yAxisScrollbar->GetSize().GetWidth() : 0;
 
-    m_clientRect = wxRect(0, 0, size.x-sb_width, size.y-sb_width);
+	//mao modi
+	if (!this->m_xAxis->IsShown()) {
+		m_clientRect = wxRect(0, 0, size.x - 8, size.y -2);
+	}
+	else {
+		m_clientRect = wxRect(0, 0, size.x - 8, size.y - 6);
+	}
 
     // title and label positions, add padding here
     wxRect titleRect  = m_show_title  ? wxRect(m_titleRect).Inflate(m_border)  : wxRect(0,0,1,1);
@@ -2530,7 +2538,7 @@ void wxPlotCtrl::DrawAreaWindow( wxDC *dc, const wxRect &rect )
     {
         curve = GetCurve(i);
 
-        if (curve != activeCurve)
+        if (curve && curve->GetRefData() && curve != activeCurve)
         {
             if (wxDynamicCast(curve, wxPlotData))
                 DrawDataCurve( dc, wxDynamicCast(curve, wxPlotData), i, refreshRect );
@@ -2539,13 +2547,16 @@ void wxPlotCtrl::DrawAreaWindow( wxDC *dc, const wxRect &rect )
         }
     }
     // active curve is drawn on top
-    if (activeCurve)
+    if (activeCurve && activeCurve->GetRefData() )
     {
         if (wxDynamicCast(activeCurve, wxPlotData))
             DrawDataCurve( dc, wxDynamicCast(activeCurve, wxPlotData), GetActiveIndex(), refreshRect );
         else
             DrawCurve( dc, activeCurve, GetActiveIndex(), refreshRect );
-    }
+	}
+	else {
+		int i = 0;
+	}
 
     DrawCurveCursor( dc );
     DrawKey( dc );
@@ -3025,8 +3036,18 @@ void wxPlotCtrl::DoAutoCalcTicks(bool x_axis)
 
     if (sigFigs > 9) sigFigs = 9; // FIXME
 
-    if (exponential) tickFormat->Printf( wxT("%%.%dle"), sigFigs );
-    else             tickFormat->Printf( wxT("%%.%dlf"), sigFigs );
+	if (!x_axis) {
+		if (exponential)
+			tickFormat->Printf(wxT("%%4.%dlf"), sigFigs);
+		else
+			tickFormat->Printf(wxT("%%4.%dlf"), sigFigs);
+	}
+	else {
+		if (exponential)
+			tickFormat->Printf(wxT("%%.%dlf"), sigFigs);
+		else
+			tickFormat->Printf(wxT("%%.%dlf"), sigFigs);
+	}
 
     *tick_count = int(ceil(range/(*tick_step))) + 1;
 
@@ -3083,7 +3104,8 @@ void wxPlotCtrl::CalcXAxisTickPositions()
         if ((x >= -1) && (x < windowWidth+2))
         {
             m_xAxisTicks.Add(x);
-            m_xAxisTickLabels.Add(wxString::Format(m_xAxisTickFormat.c_str(), current));
+			wxString l = wxString::Format(m_xAxisTickFormat.c_str(), current);
+            m_xAxisTickLabels.Add(l); 
         }
 
         current += m_xAxisTick_step;

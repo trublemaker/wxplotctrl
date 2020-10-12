@@ -585,6 +585,10 @@ void wxPlotDrawerYAxis::Draw(wxDC *dc, bool refresh)
     dc->SetTextForeground( m_tickColour.GetColour() );
     dc->SetFont( tickFont );
 
+	//mao test code....
+	//WORD x = GetTextAlign((HDC)dc->GetHDC());
+	//SetTextAlign((HDC)dc->GetHDC(), TA_RIGHT); // TA_LEFT TA_RIGHT TA_BOTTOM 
+
     wxString label;
     // double current = ceil(m_viewRect.GetTop() / m_yAxisTick_step) * m_yAxisTick_step;
     int i, count = m_tickLabels.GetCount();
@@ -822,6 +826,8 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
     int bitmapHalfHeight = bitmap.GetHeight()/2;
 */
 
+	if (!curve->GetRefData()) return;
+
     // find the starting and ending indexes into the data curve
     int n, n_start, n_end;
     bool x_ordered = curve->GetIsXOrdered();
@@ -838,9 +844,13 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
         n_end   = curve->GetCount();
     }
 
+	 
     // set the pens to draw with
     wxPen currentPen = (curve_index == m_owner->GetActiveIndex()) ? curve->GetPen(wxPLOTPEN_ACTIVE).GetPen()
                                                                   : curve->GetPen(wxPLOTPEN_NORMAL).GetPen();
+
+	if (!curve->GetRefData()) return;
+
     wxPen selectedPen = curve->GetPen(wxPLOTPEN_SELECTED).GetPen();
     if (m_pen_scale != 1)
     {
@@ -851,22 +861,33 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
     dc->SetPen(currentPen);
 
     // handle the selected ranges and initialize the starting range
-    const wxArrayRangeInt &ranges = m_owner->GetDataCurveSelection(curve_index)->GetRangeArray();
-    int n_range = 0, range_count = ranges.GetCount();
-    int min_sel = -1, max_sel = -1;
-    for (n_range=0; n_range<range_count; n_range++)
-    {
-        const wxRangeInt& range = ranges[n_range];
-        if ((range.m_max >= n_start) || (range.m_min >= n_start))
-        {
-            min_sel = range.m_min;
-            max_sel = range.m_max;
-            if (range.Contains(n_start))
-                dc->SetPen( selectedPen );
+	int n_range = 0, range_count = 0;
+	int min_sel = -1, max_sel = -1;
 
-            break;
-        }
-    }
+	wxRangeIntSelection *pSel = m_owner->GetDataCurveSelection(curve_index);
+
+	if (!pSel) {
+		return;
+	}
+    const wxArrayRangeInt &ranges = m_owner->GetDataCurveSelection(curve_index)->GetRangeArray();
+
+	if (&ranges!=0) {
+		range_count = ranges.GetCount();
+
+		for (n_range = 0; n_range<range_count; n_range++)
+		{
+			const wxRangeInt& range = ranges[n_range];
+			if ((range.m_max >= n_start) || (range.m_min >= n_start))
+			{
+				min_sel = range.m_min;
+				max_sel = range.m_max;
+				if (range.Contains(n_start))
+					dc->SetPen(selectedPen);
+
+				break;
+			}
+		}
+	}
 
     // data variables
     const double *x_data = &curve->GetXData()[n_start];

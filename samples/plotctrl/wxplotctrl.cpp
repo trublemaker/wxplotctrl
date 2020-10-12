@@ -217,11 +217,15 @@ wxPlotCtrlFrame::wxPlotCtrlFrame() : wxFrame()
 	m_plotCtrl->SetShowXScrollBar(false);
 	m_plotCtrl->SetShowYScrollBar(false);
 
+	wxColor c1(0, 255, 0);
+ 
+	m_plotCtrl->SetBackgroundColour(c1);
+
 	wxPlotCtrlAxis* x= m_plotCtrl->GetPlotXAxis();
 
 	wxPoint2DDouble xx = m_plotCtrl->GetZoom();
 	wxRect2DDouble rect;
-	rect.m_x = 0; rect.m_y = -30; rect.m_width = 20; rect.m_height = 60;
+	rect.m_x = 0; rect.m_y = -800; rect.m_width = 20; rect.m_height = 1600;
 	m_plotCtrl->SetDefaultBoundingRect(rect);
 
     m_textCtrl->AppendText(wxT("For mouse and key functions, please see\nwxPlotCtrl::ProcessAreaEVT_MOUSE_EVENTS and wxPlotCtrl::ProcessAreaEVT_CHAR\n"));
@@ -300,7 +304,7 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
 					wxPlotCurve* curve = m_plotCtrl->GetCurve(0);	
 
 					//m_plotCtrl->GetYAxisLabel();
-					m_plotCtrl->SetYAxisLabel("TTT");
+					m_plotCtrl->SetYAxisLabel("XXX");
 				
 					wxPlotPen_Type colour_type = wxPLOTPEN_NORMAL;
 					wxGenericPen pen(wxColour(255, 128, 0), 4);
@@ -383,8 +387,11 @@ void wxPlotCtrlFrame::OnMenu(wxCommandEvent& event)
 			curve->SetRefData( ref );
 			count = data->GetCount();
 			m_plotCtrl->AddCurve(newdata);
-			//m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_EVERYTHING);
+			
+			m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_EVERYTHING);
 			OutputDebugStringA("XXXXX\t");
+
+			m_plotCtrl->Redraw(wxPLOTCTRL_REDRAW_YAXIS);
 
 			wxRect2DDouble rect;
 			int y = 2;
