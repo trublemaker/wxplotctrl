@@ -55,30 +55,7 @@ const wxPlotData wxNullPlotData;
 // wxPlotDataRefData
 //----------------------------------------------------------------------------
 
-class wxPlotDataRefData: public wxPlotCurveRefData
-{
-public:
-    wxPlotDataRefData();
-    wxPlotDataRefData(const wxPlotDataRefData& data);
-    virtual ~wxPlotDataRefData();
 
-    void Destroy();
-    void CopyData(const wxPlotDataRefData &source);
-    void CopyExtra(const wxPlotDataRefData &source);
-
-    int     m_count;
-
-    double *m_Xdata;
-    double *m_Ydata;
-    double *m_Yidata; // imaginary component, not normally used (see FFT)
-    bool    m_static;
-
-    bool    m_Xordered;
-
-    wxBitmap m_normalSymbol,
-             m_activeSymbol,
-             m_selectedSymbol;
-};
 
 wxPlotDataRefData::wxPlotDataRefData() : wxPlotCurveRefData()
 {
@@ -572,9 +549,14 @@ void wxPlotData::CalcBoundingRect()
         else             xlast = x;
     }
 
-    if (valid)
-        M_PLOTDATA->m_boundingRect = wxRect2DDouble(xmin, ymin, xmax-xmin, ymax-ymin);
-    else
+	if (valid) {
+		if ( (ymax - ymin) < 0.0001) {
+			ymin = ymin - fabs(ymin*0.02);
+			ymax = ymax + ymax*0.02;
+		}
+		M_PLOTDATA->m_boundingRect = wxRect2DDouble(xmin, ymin  , xmax - xmin, ymax - ymin );
+	}
+	else
         M_PLOTDATA->m_boundingRect = wxNullPlotBounds;
 
     M_PLOTDATA->m_Xordered = xordered;

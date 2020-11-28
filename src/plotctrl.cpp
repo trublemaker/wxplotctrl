@@ -54,6 +54,11 @@
     #undef GetYValue
 #endif
 
+#ifdef _BORDER_MEASUR_
+	extern wxArrayString g_GanNames;
+	extern wxArrayDouble g_GanDistance;
+#endif
+
 //-----------------------------------------------------------------------------
 // Consts
 //-----------------------------------------------------------------------------
@@ -475,6 +480,9 @@ void wxPlotCtrl::Init()
     m_fit_on_new_curve        = true;
     m_show_xAxis              = true;
     m_show_yAxis              = true;
+
+	m_niAxis = false;
+	m_ManAxis = false;
 
     m_zoom = wxPoint2DDouble( 1.0, 1.0 );
     m_history_views_index = -1;
@@ -2773,6 +2781,7 @@ void wxPlotCtrl::DrawTickMarks( wxDC *dc, const wxRect& rect )
         else if (tick_pos > rect.GetRight())
             break;
 
+		//ÊúÖá mao++
         dc->DrawLine(tick_pos, clientRect.height, tick_pos, clientRect.height - xtick_length);
     }
 
@@ -2918,8 +2927,6 @@ void wxPlotCtrl::DrawWholePlot( wxDC *dc, const wxRect &boundingRect, double dpi
     dc->DrawRectangle(m_yAxisRect);
     dc->DrawRectangle(m_areaRect);
 
-
-
     //restore old values
     m_area_border_width = old_area_border_width;
     m_border = old_border;
@@ -3038,15 +3045,15 @@ void wxPlotCtrl::DoAutoCalcTicks(bool x_axis)
 
 	if (!x_axis) {
 		if (exponential)
-			tickFormat->Printf(wxT("%%4.%dlf"), sigFigs);
+			tickFormat->Printf(wxT("%%4.%dlf"), 0/*sigFigs*/);
 		else
-			tickFormat->Printf(wxT("%%4.%dlf"), sigFigs);
+			tickFormat->Printf(wxT("%%4.%dlf"), 0/*sigFigs*/);
 	}
 	else {
 		if (exponential)
-			tickFormat->Printf(wxT("%%.%dlf"), sigFigs);
+			tickFormat->Printf(wxT("%%.%dlf"), 0/*sigFigs*/);
 		else
-			tickFormat->Printf(wxT("%%.%dlf"), sigFigs);
+			tickFormat->Printf(wxT("%%.%dlf"), 0/*sigFigs*/);
 	}
 
     *tick_count = int(ceil(range/(*tick_step))) + 1;
@@ -3057,6 +3064,7 @@ void wxPlotCtrl::DoAutoCalcTicks(bool x_axis)
 void wxPlotCtrl::CorrectXAxisTicks()
 {
     double start = ceil(m_viewRect.GetLeft() / m_xAxisTick_step) * m_xAxisTick_step;
+	if (start == -0)start = 0;
     wxString label;
     label.Printf( m_xAxisTickFormat.c_str(), start);
     if (label.ToDouble( &start ))
@@ -3092,7 +3100,14 @@ void wxPlotCtrl::CorrectYAxisTicks()
 void wxPlotCtrl::CalcXAxisTickPositions()
 {
     double current = ceil(m_viewRect.GetLeft() / m_xAxisTick_step) * m_xAxisTick_step;
-    m_xAxisTicks.Clear();
+	if (current == -0)current = 0;
+	double start = m_viewRect.GetLeft();
+
+	if (this->m_niAxis) {
+		//current = fabs(current);
+	}
+
+	m_xAxisTicks.Clear();
     m_xAxisTickLabels.Clear();
     int i, x, windowWidth = GetPlotAreaRect().width;
     for (i=0; i<m_xAxisTick_count; i++)
@@ -3105,11 +3120,23 @@ void wxPlotCtrl::CalcXAxisTickPositions()
         {
             m_xAxisTicks.Add(x);
 			wxString l = wxString::Format(m_xAxisTickFormat.c_str(), current);
+			if (this->m_niAxis) {
+				l = wxString::Format(m_xAxisTickFormat.c_str(), fabs(current));
+			}
             m_xAxisTickLabels.Add(l); 
         }
 
         current += m_xAxisTick_step;
     }
+
+	if (this->m_niAxis) {
+		x = GetClientCoordFromPlotX(m_viewRect.GetLeft() +(m_viewRect .GetRight()- m_viewRect.GetLeft())/2);
+		if ((x >= -1) && (x < windowWidth + 2))
+		{
+			m_xAxisTicks.Add(x);
+			m_xAxisTickLabels.Add("M");
+		}
+	}
 }
 void wxPlotCtrl::CalcYAxisTickPositions()
 {
@@ -3147,7 +3174,7 @@ void wxPlotCtrl::ProcessAreaEVT_MOUSE_EVENTS( wxMouseEvent &event )
     m_mousePt = event.GetPosition();
 
 	//mao 2020.09.09
-	return;
+	//return;
 
     if (event.ButtonDown() && IsTextCtrlShown())
     {
@@ -3393,6 +3420,9 @@ void wxPlotCtrl::ProcessAxisEVT_MOUSE_EVENTS( wxMouseEvent &event )
         HideTextCtrl(true, true);
         return;
     }
+
+	//mao ++
+	if (1) return;
 
     wxPoint pos = event.GetPosition();
     wxPlotCtrlAxis *axisWin = (wxPlotCtrlAxis*)event.GetEventObject();

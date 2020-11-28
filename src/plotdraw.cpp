@@ -54,6 +54,8 @@
 // Consts
 //-----------------------------------------------------------------------------
 
+int g_len_change=100000;
+
 #if defined(__WXGTK__) && wxPLOTCTRL_FAST_GRAPHICS
 
 extern "C" {
@@ -723,6 +725,8 @@ IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerCurve, wxPlotDrawerBase)
 
 void wxPlotDrawerCurve::Draw(wxDC *dc, wxPlotCurve *curve, int curve_index)
 {
+	OutputDebugStringA("x    ");
+
     wxCHECK_RET(dc && m_owner && curve && curve->Ok(), wxT("invalid curve"));
     INITIALIZE_FAST_GRAPHICS
 
@@ -795,6 +799,16 @@ void wxPlotDrawerCurve::Draw(wxDC *dc, wxPlotCurve *curve, int curve_index)
 //-----------------------------------------------------------------------------
 IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerDataCurve, wxPlotDrawerBase)
 
+#define mLogDebug( Fmt__ )    \
+do{                                   \
+wxDateTime dt_t__ = wxDateTime::UNow();\
+wxString str__ = wxString::Format( "%s.%03d\t", dt_t__.FormatTime(), dt_t__.GetMillisecond() ).c_str(); \
+wxString strfmt__ = wxString::Format Fmt__ ; \
+str__ = str__ + strfmt__ +" \n";	\
+OutputDebugStringA( str__.c_str()  );	\
+}while(0)
+
+
 void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
 {
     wxCHECK_RET(dc && m_owner && curve && curve->Ok(), wxT("invalid curve"));
@@ -858,7 +872,16 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
         selectedPen.SetWidth(int(selectedPen.GetWidth() * m_pen_scale));
     }
 
+	wxColour c = currentPen.GetColour();
+
     dc->SetPen(currentPen);
+
+	if (window)
+	{
+		//(void)MoveToEx(window, x0, y0, NULL);
+		//window = (HDC)dc->GetHDC()
+		SelectObject(window, currentPen.GetResourceHandle());
+	}
 
     // handle the selected ranges and initialize the starting range
 	int n_range = 0, range_count = 0;
@@ -892,13 +915,18 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
     // data variables
     const double *x_data = &curve->GetXData()[n_start];
     const double *y_data = &curve->GetYData()[n_start];
+	const double *len_data = &curve->GetYiData()[n_start];
 
     int i0, j0, i1, j1;        // curve coords in pixels
     double x0, y0, x1, y1;     // original curve coords
     double xx0, yy0, xx1, yy1; // clipped curve coords
 
+	double len0=0,len1=0,len2=0;
+
     x0 = *x_data;
     y0 = *y_data;
+
+	if(curve->GetYiData() && len_data)	len0 = *len_data;
 
     int clipped = ClippedNeither;
 
@@ -945,6 +973,9 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
         x1 = *x_data++;
         y1 = *y_data++;
 
+		if (curve->GetYiData() && len_data) len1 = *len_data++;
+		//len2 = *len_data;
+
         if (draw_spline)
             sd.DrawSpline(m_owner->GetClientCoordFromPlotX(x1),
                           m_owner->GetClientCoordFromPlotY(y1));
@@ -960,8 +991,23 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
 
             if (draw_lines && ((i0 != i1) || (j0 != j1)))
             {
-                wxPLOTCTRL_DRAW_LINE(dc, window, pen, i0, j0, i1, j1);
-            }
+				if ( (curve->GetYiData() && len_data) && abs(len1 - len0)>g_len_change) {
+					
+				}
+				else 
+				{
+					if (window)
+					{
+						(void)MoveToEx(window, i0, j0, NULL);
+						(void)LineTo(window, i1, j1);
+
+						//mLogDebug(("%3d: %3d-%3d  %3d-%3d",n, i0,j0,i1,j1));
+					}
+					else
+						dc->DrawLine(i0, j0, i1, j1);
+				}
+				len0 = len1;
+			}
 
             if (n == min_sel)
                 dc->SetPen( selectedPen );
@@ -970,7 +1016,19 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
                 ((i0 != i1) || (j0 != j1) || (n == min_sel) || (n == n_start)))
             {
                 //dc->DrawBitmap( bitmap, i1 - bitmapHalfWidth, j1 - bitmapHalfHeight, true );
-                wxPLOTCTRL_DRAW_ELLIPSE(dc, window, pen, i1, j1, 2, 2);
+				//SetPixel( (HDC)dc->GetHDC(),2, 2, RGB(255, 0, 0));
+		
+				if (1) {
+					if (window)
+						(void)Ellipse(window, (i1)-(2), (j1)-(2), (i1)+2 , (j1)+2 );
+					else
+						dc->DrawEllipse(i1, j1, 2, 2);
+					//mLogDebug(("%3d: %3d-%3d  ", n,  i1, j1));
+				}
+				else {
+					//wxPLOTCTRL_DRAW_ELLIPSE(dc, window, pen, i1, j1, 1, 1);
+					SetPixel((HDC)dc->GetHDC(), i1, j1, RGB(11, 0, 0));
+				}
             }
         }
         else if (n == min_sel)
@@ -991,6 +1049,7 @@ void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
 
         x0 = x1;
         y0 = y1;
+		len0 = len1;
     }
 
     if (draw_spline)
