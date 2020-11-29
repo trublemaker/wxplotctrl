@@ -42,6 +42,7 @@
 #include <math.h>
 #include <float.h>
 #include <limits.h>
+#include <map>
 
 // MSVC hogs global namespace with these min/max macros - remove them
 #ifdef max
@@ -2532,10 +2533,16 @@ void wxPlotCtrl::DrawAreaWindow( wxDC *dc, const wxRect &rect )
 
     dc->SetBrush( wxBrush(GetBackgroundColour(), wxSOLID) );
     dc->SetPen( wxPen(GetBorderColour(), m_area_border_width, wxSOLID) );
-    dc->DrawRectangle(clientRect);
+
+	dc->DrawRectangle(clientRect);
 
     DrawTickMarks( dc, refreshRect );
     DrawMarkers( dc, refreshRect );
+
+	//mao++
+	if (this->m_niAxis || this->m_ManAxis) {
+		DrawGans(dc, refreshRect);
+	}
 
     dc->DestroyClippingRegion();
 
@@ -2762,6 +2769,33 @@ void wxPlotCtrl::DrawCurveCursor( wxDC *dc )
     m_markerDrawer->Draw(dc, m_cursorMarker);
 }
 
+void wxPlotCtrl::DrawGans(wxDC *dc, const wxRect& rect)
+{
+	wxRect clientRect(GetPlotAreaRect());
+	dc->SetPen(wxPen( *wxRED, 1, wxSOLID));
+
+	int xtick_length = GetDrawGrid() ? clientRect.height : 10;
+	int ytick_length = GetDrawGrid() ? clientRect.width : 10;
+
+	int tick_pos, i;
+	// 	wxArrayDouble m_xGans;
+	//wxArrayString m_xGanLabels;
+
+	int tick_count = m_xGans.GetCount();
+	for (i = 0; i<tick_count; i++)
+	{
+		tick_pos = m_xGans[i];
+		if (tick_pos < rect.x)
+			continue;
+		else if (tick_pos > rect.GetRight())
+			break;
+
+		//ÊúÖá mao++
+		dc->DrawLine(tick_pos, clientRect.height, tick_pos, clientRect.height - xtick_length);
+	}
+
+}
+
 void wxPlotCtrl::DrawTickMarks( wxDC *dc, const wxRect& rect )
 {
     wxRect clientRect(GetPlotAreaRect());
@@ -2813,6 +2847,12 @@ void wxPlotCtrl::DrawXAxis( wxDC *dc, bool refresh )
 
     m_xAxisDrawer->SetTickPositions( m_xAxisTicks );
     m_xAxisDrawer->SetTickLabels( m_xAxisTickLabels );
+
+	//mao ++ 2020.11.29 -->
+	m_xAxisDrawer->SetGanTickPositions(m_xGans);
+	m_xAxisDrawer->SetGanTickLabels(m_xGanLabels);
+	//mao ++ 2020.11.29 <--
+
     m_xAxisDrawer->SetPlotViewRect(m_viewRect);
     wxSize clientSize = m_xAxisRect.GetSize();
     m_xAxisDrawer->SetDCRect(wxRect(wxPoint(0,0),clientSize));
@@ -3102,9 +3142,14 @@ void wxPlotCtrl::CalcXAxisTickPositions()
     double current = ceil(m_viewRect.GetLeft() / m_xAxisTick_step) * m_xAxisTick_step;
 	if (current == -0)current = 0;
 	double start = m_viewRect.GetLeft();
+	
+	std::map<double, wxString>  XAxisMap;
+	std::map<double, wxString>::iterator xit;
+	std::map<double, wxString>::reverse_iterator xit_r;
 
-	if (this->m_niAxis) {
-		//current = fabs(current);
+	if (this->m_niAxis) //µ¼¸ß
+	{
+		current = (current);
 	}
 
 	m_xAxisTicks.Clear();
@@ -3124,18 +3169,42 @@ void wxPlotCtrl::CalcXAxisTickPositions()
 				l = wxString::Format(m_xAxisTickFormat.c_str(), fabs(current));
 			}
             m_xAxisTickLabels.Add(l); 
+			XAxisMap.insert(std::pair<double, wxString>(x,l));
         }
 
         current += m_xAxisTick_step;
     }
 
-	if (this->m_niAxis) {
-		x = GetClientCoordFromPlotX(m_viewRect.GetLeft() +(m_viewRect .GetRight()- m_viewRect.GetLeft())/2);
-		if ((x >= -1) && (x < windowWidth + 2))
-		{
-			m_xAxisTicks.Add(x);
-			m_xAxisTickLabels.Add("M");
+	if (this->m_niAxis||this->m_ManAxis) {
+		#ifdef _BORDER_MEASUR_
+		//extern wxArrayString g_GanNames;
+		//extern wxArrayDouble g_GanDistance;
+		m_xGans.clear();
+		m_xGanLabels.clear();
+
+		for (int i = 0; i < g_GanDistance.size(); i++) {
+			x = GetClientCoordFromPlotX(g_GanDistance[i]);
+			if ((x >= -1) && (x < windowWidth + 2))
+			{
+				//wxArrayDouble m_xGans;
+				//wxArrayString m_xGanLabels;
+
+				//XAxisMap.insert(std::pair<double, wxString>(x, g_GanNames[i]));
+				m_xGans.Add(x);
+				m_xGanLabels.Add(  g_GanNames[i]);
+				//m_xAxisTicks.Add(x);
+				//m_xAxisTickLabels.Add("\n"+g_GanNames[i]);			
+			}
 		}
+		//m_xAxisTicks.clear();
+		//m_xAxisTickLabels.clear();
+		for (xit = XAxisMap.begin(); xit != XAxisMap.end(); xit++) {
+			//m_xAxisTicks.Add(xit->first );
+			//m_xAxisTickLabels.Add(xit->second );
+		}
+		XAxisMap.clear();
+
+		#endif
 	}
 }
 void wxPlotCtrl::CalcYAxisTickPositions()

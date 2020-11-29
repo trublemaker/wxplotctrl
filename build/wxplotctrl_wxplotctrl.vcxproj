@@ -69,7 +69,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_lib\msw;$(WXWIN)\include;..\include;$(WXCODE)\components\wxthings\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BORDER_MEASUR_;_LIB;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release Multilib\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release Multilib\wxplotctrl\wxplotctrl_wxplotctrl.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>.\Release Multilib\</ObjectFileName>
@@ -99,7 +99,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_lib\mswd;$(WXWIN)\include;..\include;$(WXCODE)\components\wxthings\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BORDER_MEASUR_;_LIB;_DEBUG;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug Multilib\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Debug Multilib\wxplotctrl\wxplotctrl_wxplotctrl.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>.\Debug Multilib\</ObjectFileName>
@@ -163,17 +163,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\wx\plotctrl\fourier.h" />
-    <ClInclude Include="..\include\wx\plotctrl\fparser.h" />
-    <ClInclude Include="..\include\wx\plotctrl\lm_lsqr.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotctrl.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotcurv.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotdata.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotdefs.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotdraw.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotfunc.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotmark.h" />
-    <ClInclude Include="..\include\wx\plotctrl\plotprnt.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\fourier.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\fparser.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\lm_lsqr.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotctrl.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotcurv.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotdata.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotdefs.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotdraw.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotfunc.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotmark.h" />
+    <ClInclude Include="..\..\..\BorderMeasur\ThirdPart\wxWidgets\include\wx\plotctrl\plotprnt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

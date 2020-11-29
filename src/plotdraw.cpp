@@ -553,6 +553,22 @@ void wxPlotDrawerXAxis::Draw(wxDC *dc, bool refresh)
 //        current += m_xAxisTick_step;
     }
 
+	//mao += 2020.11.29 -->
+	m_GanPositions;
+	m_GanLabels;
+	count = m_GanPositions.GetCount();
+	//wxPen p = dc->GetPen();
+	//p.SetColour(*wxRED);
+	dc->SetTextForeground(*wxRED);
+	//dc->SetFont(tickFont);
+	for (i = 0; i<count; i++)
+	{
+		if (i<m_GanPositions.GetCount()) {
+			dc->DrawText(m_GanLabels[i], m_GanPositions[i], y_pos);
+		}
+	}
+	//mao ++ 2020.11.29 <--
+
 #ifdef DRAW_BORDERS
     // Test code for sizing to show the extent of the axes
     dc->SetBrush( *wxTRANSPARENT_BRUSH );
